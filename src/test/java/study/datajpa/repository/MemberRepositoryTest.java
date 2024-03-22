@@ -3,6 +3,8 @@ package study.datajpa.repository;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -30,6 +32,9 @@ public class MemberRepositoryTest {
 
   @Autowired
   TeamRepository teamRepository;
+
+  @PersistenceContext
+  EntityManager em;
 
   @Test
   public void testMember() {
@@ -152,6 +157,43 @@ public class MemberRepositoryTest {
     assertTrue(page.isFirst()); // 현재 첫번째 페이지인가
     assertTrue(page.hasNext());  // 다음 페이지가 있는가
   }
+
+  @Test
+  public void bulkUpdate() throws Exception {
+    //given
+    memberRepository.save(new Member("member1", 10));
+    memberRepository.save(new Member("member2", 19));
+    memberRepository.save(new Member("member3", 20));
+    memberRepository.save(new Member("member4", 21));
+    memberRepository.save(new Member("member5", 40));
+    //when
+    int resultCount = memberRepository.bulkAgePlus(20);
+    //then
+    assertEquals(resultCount,3);
+  }
+
+  @Test
+  public void findMemberLazy() throws Exception {
+    //given
+    //member1 -> teamA
+    //member2 -> teamB
+    Team teamA = new Team("teamA");
+    Team teamB = new Team("teamB");
+    teamRepository.save(teamA);
+    teamRepository.save(teamB);
+    memberRepository.save(new Member("member1", 10, teamA));
+    memberRepository.save(new Member("member2", 20, teamB));
+    em.flush();
+    em.clear();
+    //when
+
+    List<Member> members = memberRepository.findAll();
+
+
+  }
+  
+  
+  
 
 
 }
