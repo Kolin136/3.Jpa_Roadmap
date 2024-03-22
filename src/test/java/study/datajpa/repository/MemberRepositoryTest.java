@@ -1,6 +1,7 @@
 package study.datajpa.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -8,6 +9,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
@@ -105,6 +111,47 @@ public class MemberRepositoryTest {
     }
   }
 
+  @Test
+  public void returnType() throws Exception {
+    //given
+    Member m1 = new Member("AAA", 10);
+    Member m2 = new Member("BBB", 20);
+    memberRepository.save(m1);
+    memberRepository.save(m2);
+
+    List<Member> aaa = memberRepository.findListByUsername("AAA");
+
+  }
+
+  @Test
+  public void paging() throws Exception {
+    //given
+    memberRepository.save(new Member("member1", 10));
+    memberRepository.save(new Member("member2", 10));
+    memberRepository.save(new Member("member3", 10));
+    memberRepository.save(new Member("member4", 10));
+    memberRepository.save(new Member("member5", 10));
+
+    int age = 10;
+    PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Direction.DESC, "username"));
+    //when
+    Page<Member> page = memberRepository.findByAge(age, pageRequest);
+
+    Page<MemberDto> toMap = page.map(
+        member -> new MemberDto(member.getId(), member.getUsername(), null));
+
+    //then
+    List<Member> content = page.getContent();
+
+    long totalElements = page.getTotalElements();
+
+    assertEquals(content.size(),3);  // 페이징하고 가져온 데이터 개수
+    assertEquals(page.getTotalElements(),5);  // 페이징 필터전 전체 개수
+    assertEquals(page.getNumber(),0);  // 현재 몇번째 페이지
+    assertEquals(page.getTotalPages(),2); // 총 페이지 개수
+    assertTrue(page.isFirst()); // 현재 첫번째 페이지인가
+    assertTrue(page.hasNext());  // 다음 페이지가 있는가
+  }
 
 
 }

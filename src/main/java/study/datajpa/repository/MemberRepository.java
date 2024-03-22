@@ -1,6 +1,10 @@
 package study.datajpa.repository;
 
 import java.util.List;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,8 +37,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   @Query("select m from Member m where m.username in :names")
   List<Member> findByNames(@Param("names") List<String> names);
 
+  List<Member> findListByUsername(String name); //컬렉션
+  Member findMemberByUsername(String name); //단건
+  Optional<Member> findOptionalByUsername(String name); //단건 Optiona
 
-
+  @Query(value = "select m from Member m left join m.team t")
+  Page<Member> findByAge(int age, Pageable pageable);
 
 
 }
