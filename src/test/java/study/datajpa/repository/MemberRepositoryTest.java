@@ -166,8 +166,10 @@ public class MemberRepositoryTest {
     memberRepository.save(new Member("member3", 20));
     memberRepository.save(new Member("member4", 21));
     memberRepository.save(new Member("member5", 40));
+
     //when
     int resultCount = memberRepository.bulkAgePlus(20);
+
     //then
     assertEquals(resultCount,3);
   }
