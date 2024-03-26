@@ -9,6 +9,7 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -190,10 +191,23 @@ public class MemberRepositoryTest {
     //when
 
     List<Member> members = memberRepository.findAll();
+  }
 
+  @Test
+  public void callCustrom() throws Exception {
+    //given
+    List<Member> result = memberRepository.findMemberCustom();
+    //when
+    System.out.println("체크"+memberRepository.getClass());
+    //then
+    assertTrue(AopUtils.isAopProxy(memberRepository));
+    assertTrue(AopUtils.isJdkDynamicProxy(memberRepository));
 
   }
-  
+
+
+
+
   
   
 
