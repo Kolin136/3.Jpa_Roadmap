@@ -17,7 +17,7 @@ import study.datajpa.dto.MemberDtoRecord;
 import study.datajpa.dto.UsernameOnlyDto;
 import study.datajpa.entity.Member;
 
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepositoryCustom {
 
   List<Member> findByUsernameAndAgeGreaterThan(String username,int age);
 
@@ -63,8 +63,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
   List<UsernameOnlyDto> findProjectionsByUsername(@Param("username") String username);
 
 
-
-
+  @Query(value = "SELECT m.member_id as id, m.username, t.name as teamName " +
+      "from member m left join team t",
+      countQuery = "SELECT count(*) from member",
+      nativeQuery = true)
+  Page<MemberProjection> findByNativeProjection(Pageable pageable);
 
 
 }

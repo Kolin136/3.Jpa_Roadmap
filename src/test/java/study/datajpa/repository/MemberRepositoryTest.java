@@ -194,17 +194,17 @@ public class MemberRepositoryTest {
     List<Member> members = memberRepository.findAll();
   }
 
-//  @Test
-//  public void callCustrom() throws Exception {
-//    //given
-//    List<Member> result = memberRepository.findMemberCustom();
-//    //when
-//    System.out.println("체크"+memberRepository.getClass());
-//    //then
-//    assertTrue(AopUtils.isAopProxy(memberRepository));
-//    assertTrue(AopUtils.isJdkDynamicProxy(memberRepository));
-//
-//  }
+  @Test
+  public void callCustrom() throws Exception {
+    //given
+    List<Member> result = memberRepository.findMemberCustom();
+    //when
+    System.out.println("체크"+memberRepository.getClass());
+    //then
+    assertTrue(AopUtils.isAopProxy(memberRepository));
+    assertTrue(AopUtils.isJdkDynamicProxy(memberRepository));
+
+  }
 
   @Test
   public void projections() throws Exception {
@@ -218,12 +218,12 @@ public class MemberRepositoryTest {
     em.flush();
     em.clear();
     //when
-    List<UsernameOnlyDto> result =
-        memberRepository.findProjectionsByUsername("m1");
-    //then
-    Assertions.assertThat(result.size()).isEqualTo(1);
-
-
+    Page<MemberProjection> result = memberRepository.findByNativeProjection(PageRequest.of(0, 10));
+    List<MemberProjection> content = result.getContent();
+    for (MemberProjection memberProjection : content) {
+      System.out.println("memberProjection.getUsername() = " + memberProjection.getUsername());
+      System.out.println("memberProjection.getTeamName() = " + memberProjection.getTeamName());
+    }
   }
 
 

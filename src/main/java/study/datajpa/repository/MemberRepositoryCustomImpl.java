@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 import study.datajpa.entity.Member;
 
 @RequiredArgsConstructor
-public class MemberRepositoryCustomImpl{
+public class MemberRepositoryCustomImpl implements MemberRepositoryCustom{
 
   private final EntityManager em;
 
-
+  @Override
   public List<Member> findMemberCustom() {
     System.out.println("하하");
     return em.createQuery("select m from Member m where age > :age")
