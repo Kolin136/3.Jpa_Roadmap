@@ -21,6 +21,7 @@ import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.dto.MemberDtoRecord;
+import study.datajpa.dto.UsernameOnlyDto;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
@@ -193,23 +194,44 @@ public class MemberRepositoryTest {
     List<Member> members = memberRepository.findAll();
   }
 
+//  @Test
+//  public void callCustrom() throws Exception {
+//    //given
+//    List<Member> result = memberRepository.findMemberCustom();
+//    //when
+//    System.out.println("체크"+memberRepository.getClass());
+//    //then
+//    assertTrue(AopUtils.isAopProxy(memberRepository));
+//    assertTrue(AopUtils.isJdkDynamicProxy(memberRepository));
+//
+//  }
+
   @Test
-  public void callCustrom() throws Exception {
+  public void projections() throws Exception {
     //given
-    List<Member> result = memberRepository.findMemberCustom();
+    Team teamA = new Team("teamA");
+    em.persist(teamA);
+    Member m1 = new Member("m1", 0, teamA);
+    Member m2 = new Member("m2", 0, teamA);
+    em.persist(m1);
+    em.persist(m2);
+    em.flush();
+    em.clear();
     //when
-    System.out.println("체크"+memberRepository.getClass());
+    List<UsernameOnlyDto> result =
+        memberRepository.findProjectionsByUsername("m1");
     //then
-    assertTrue(AopUtils.isAopProxy(memberRepository));
-    assertTrue(AopUtils.isJdkDynamicProxy(memberRepository));
+    Assertions.assertThat(result.size()).isEqualTo(1);
+
 
   }
 
 
 
 
-  
-  
+
+
+
 
 
 }

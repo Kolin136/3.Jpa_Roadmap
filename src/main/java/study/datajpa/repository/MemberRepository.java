@@ -14,9 +14,10 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.dto.MemberDtoRecord;
+import study.datajpa.dto.UsernameOnlyDto;
 import study.datajpa.entity.Member;
 
-public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepositoryCustom {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
   List<Member> findByUsernameAndAgeGreaterThan(String username,int age);
 
@@ -58,4 +59,12 @@ public interface MemberRepository extends JpaRepository<Member, Long>,MemberRepo
 
   @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
   Member findReadOnlyByUsername(String username);
+
+  List<UsernameOnlyDto> findProjectionsByUsername(@Param("username") String username);
+
+
+
+
+
+
 }
